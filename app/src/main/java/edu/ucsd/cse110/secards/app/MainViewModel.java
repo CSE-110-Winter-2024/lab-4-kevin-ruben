@@ -1,5 +1,10 @@
 package edu.ucsd.cse110.secards.app;
 
+import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
+
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.viewmodel.ViewModelInitializer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +13,7 @@ import edu.ucsd.cse110.secards.lib.domain.Flashcard;
 import edu.ucsd.cse110.secards.lib.domain.FlashcardRepository;
 import edu.ucsd.cse110.secards.lib.util.Subject;
 
-public class MainViewModel {
+public class MainViewModel extends ViewModel{
     // Domain state (true "Model" state)
     private final FlashcardRepository flashcardRepository;
 
@@ -17,6 +22,16 @@ public class MainViewModel {
     private final Subject<Flashcard> topCard;
     private final Subject<Boolean> isShowingFront;
     private final Subject<String> displayedText;
+
+    public static final ViewModelInitializer<MainViewModel> initializer =
+            new ViewModelInitializer<>(
+                    MainViewModel.class,
+                    creationExtras -> {
+                        var app = (SECardsApplication) creationExtras.get(APPLICATION_KEY);
+                        assert app != null;
+
+                        return new MainViewModel(app.getFlashcardRepository());
+                    });
 
     public MainViewModel(FlashcardRepository flashcardRepository) {
         this.flashcardRepository = flashcardRepository;
