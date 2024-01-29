@@ -31,7 +31,7 @@ public class StudyFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Initialize the Model
-        var modelOwner = this;
+        var modelOwner = requireActivity();
         var modelFactory = ViewModelProvider.Factory.from(MainViewModel.initializer);
         var modelProvider = new ViewModelProvider(modelOwner, modelFactory);
         this.activityModel = modelProvider.get(MainViewModel.class);
