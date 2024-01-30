@@ -5,6 +5,7 @@ import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLI
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ public class MainViewModel extends ViewModel{
 
     // UI state
     private final Subject<List<Integer>> cardOrdering;
+    private final Subject<List<Flashcard>> orderedCards;
     private final Subject<Flashcard> topCard;
     private final Subject<Boolean> isShowingFront;
     private final Subject<String> displayedText;
@@ -38,6 +40,7 @@ public class MainViewModel extends ViewModel{
 
         // Create the observable subjects.
         this.cardOrdering = new Subject<>();
+        this.orderedCards = new Subject<>();
         this.topCard = new Subject<>();
         this.isShowingFront = new Subject<>();
         this.displayedText = new Subject<>();
@@ -60,9 +63,21 @@ public class MainViewModel extends ViewModel{
         cardOrdering.observe(ordering -> {
             if (ordering == null) return;
 
-            var card = flashcardRepository.find(ordering.get(0)).getValue();
-            if (card == null) return;
-            this.topCard.setValue(card);
+            var cards = new ArrayList<Flashcard>();
+            for(var id : ordering){
+                var card = flashcardRepository.find(id).getValue();
+                if (card == null) return;
+                cards.add(card);
+            }
+
+            this.orderedCards.setValue(cards);
+        });
+
+        orderedCards.observe(cards -> {
+            if (cards == null) return;
+
+
+            this.topCard.setValue(cards.get(0));
         });
 
         // When the top card changes, update the displayed text and display the front side.
@@ -120,5 +135,9 @@ public class MainViewModel extends ViewModel{
         var newOrdering = new ArrayList<>(ordering);
         Collections.shuffle(newOrdering);
         this.cardOrdering.setValue(newOrdering);
+    }
+
+    public Subject<List<Flashcard>> getOrderedCards() {
+        return orderedCards;
     }
 }

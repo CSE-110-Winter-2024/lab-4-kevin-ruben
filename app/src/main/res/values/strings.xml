@@ -8,4 +8,5 @@
     <string name="cards_in_deck_text_format">Deck contains %d cards</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="swap_views">Swap Views</string>
 </resources>
